@@ -1,0 +1,76 @@
+<!doctype html>
+<html lang="en">
+ <head>
+  <meta charset="UTF-8">
+  <meta name="Generator" content="EditPlus®">
+  <meta name="Author" content="">
+  <meta name="Keywords" content="">
+  <meta name="Description" content="">
+  <title>Document</title>
+	<script src="http://d3js.org/d3.v3.min.js" charset="utf-8"></script>
+	<!-- 引用本地js -->
+	<!-- <script src="d3.v3.min.js"></script> -->
+	<script src="d3.layout.cloud.js"></script>
+ </head>
+ <body>
+	<div id="container"></div>
+ </body>
+  <script>
+     //数据
+	 var frequency_list = [
+		 {"text":"好看", "size":50},
+		 {"text":"安利", "size":20},
+		 {"text":"一定去看", "size":40},
+		 {"text":"三刷啦", "size":30},
+		 {"text":"超感人的", "size":19},
+		 {"text":"上座率爆炸", "size":100},
+		 {"text":"人满为患", "size":50},
+		 {"text":"抢到票了", "size":70},
+		 {"text":"特效炒鸡棒", "size":90},
+		 {"text":"泪目", "size":120},
+		 {"text":"真的好好看", "size":54},
+		 {"text":"哈哈哈哈", "size":555},
+		 {"text":"大家随意", "size":220},
+		 {"text":"搞起来", "size":80},
+		 {"text":"五排啊", "size":19},
+		 {"text":"王者上机", "size":100}
+	 ]
+
+   //设定一个线性非连贯比例尺来进行给不同大小的词赋颜色.
+//   var color = d3.scale.linear()
+//            .domain([0,1,2,3,4,5,6,10,15,20,100])
+//            .range(["#ddd", "#ccc", "#bbb", "#aaa", "#999", "#888", "#777", "#666", "#555", "#444", "#333", "#222"]); 
+    var color = d3.scale.category20();  //输出20种类别的颜色 ---颜色比例尺
+
+
+    var layout = d3.layout.cloud()
+			.size([400, 300])
+            .words(frequency_list)
+            .rotate(0)
+            .fontSize(function(d) { return d.size; })
+            .on("end", draw);
+	
+    layout.start();
+
+    function draw(words) {
+        d3.select("#container").append("svg")//根据id插入svg
+                .attr("width", layout.size()[0])//宽度
+                .attr("height", layout.size()[1])//高度
+                .attr("viewBox","0 0 600 350")
+                .attr("style", "border: 1px solid black")
+                .attr("preserveAspectRatio","xMaxYMax meet")
+                .attr("class", "wordcloud")
+                .append("g")
+                .attr("transform", "translate(200,100)")
+                .selectAll("text")
+                .data(words)
+                .enter().append("text")
+                .style("font-size", function(d) { return d.size + "px"; })
+                .style("fill", function(d, i) { return color(i); })
+                .attr("transform", function(d) {
+                    return "translate(" + [d.x, d.y] + ")rotate(" + d.rotate + ")";
+                })
+                .text(function(d) { return d.text; });
+    }
+  </script>
+</html>
